@@ -19,16 +19,10 @@
 </style>
 
 <script>
+import axios from 'axios'
+
 export default {
     mounted() {
-        //const plugin = document.createElement("script");
-        //plugin.setAttribute("src","https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.js");
-                
-        //plugin.setAttribute("css", "https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.css")            
-        //plugin.async = true;
-
-        //document.head.appendChild(plugin);
-
         let state = this.$store.state;                    
         state.markers = [];    
 
@@ -62,6 +56,28 @@ export default {
             });
             state.markers.push(marker);
         });        
+
+        state.map.on('load', () => {  
+            axios.get('http://192.168.0.197:3000/data/feed')
+                .then( response => {
+                    state.geoJson = response.data;
+                    let layer = { 
+                        id: 'GTFS', 
+                        type: 'circle',
+                        source: { 
+                            type: 'geojson', 
+                            data: state.geoJson 
+                        },
+                        layout: {
+                            visibility: 'visible'
+                        }
+                    }
+                    state.map.addLayer(layer);
+                    this.$store.dispatch('update')
+                }).catch( err => {
+                    console.log(err);
+                });
+        });
     }
 };
 </script>
