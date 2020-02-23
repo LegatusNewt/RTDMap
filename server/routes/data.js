@@ -19,6 +19,7 @@ function fromFile(req, res, err) {
                 vehicleArray.features.push(vehicle);
             }
         });                     
+        console.log('Got Data');
         return res.status(200).send(vehicleArray);
     });   
 }

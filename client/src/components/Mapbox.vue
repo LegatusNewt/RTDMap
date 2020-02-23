@@ -58,21 +58,21 @@ export default {
         });        
 
         state.map.on('load', () => {  
-            axios.get('http://192.168.0.197:3000/data/feed')
+            axios.get('http://192.168.0.197:3000/data')
                 .then( response => {
-                    state.geoJson = response.data;
                     let layer = { 
                         id: 'GTFS', 
                         type: 'circle',
                         source: { 
                             type: 'geojson', 
-                            data: state.geoJson 
+                            data: null
                         },
                         layout: {
                             visibility: 'visible'
                         }
                     }
                     state.map.addLayer(layer);
+                    this.$store.commit('updateLayer', response.data);
                     this.$store.dispatch('update')
                 }).catch( err => {
                     console.log(err);

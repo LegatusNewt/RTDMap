@@ -13,7 +13,8 @@ Vue.config.productionTip = false
 const store = new Vuex.Store({
   state: {
     count: 0,  
-    geoJson: null,
+    vehicles: [],
+    geoJson: {},
     coordinates: [
       { x: -104.9293, y: 39.6984},
       { x: -104.9185, y: 39.6874}       
@@ -34,7 +35,15 @@ const store = new Vuex.Store({
       ]);
     },
     updateLayer(state, data) {
-      state.map.getSource('GTFS').setData(data);
+      //Gather vehicle objects from geoJSON
+      let listVehicles = [];
+      data.features.forEach( feat => {
+        listVehicles.push(parseVehicle(feat));
+      });
+      state.vehicles.splice(0, state.vehicles.length, ...listVehicles);
+      //state.geoJson.map(data);
+      Vue.set(state, 'geoJson', data);
+      state.map.getSource('GTFS').setData(data);      
       console.log('Update');
     }
   },
@@ -55,4 +64,13 @@ new Vue({
   render: h => h(App),
 }).$mount('#app')
 
+
+function parseVehicle(geoJSON){
+  const vObject = {
+    position: geoJSON.properties.position,
+    vehicle: geoJSON.properties.vehicle,
+    timestamp: new Date().toTimeString()
+  };
+  return vObject;
+}
 

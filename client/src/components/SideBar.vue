@@ -11,11 +11,18 @@
         </h4>
       </div>
       <div class="body-sidebar">
+        <h4>Markers</h4>
         <ul style="list-style: none">
           <li v-for="coord in coords">
             {{ `${coord.x.toFixed(4)} , ${coord.y.toFixed(4)}` }}
           </li>        
         </ul>
+        <h4>Transit</h4>
+        <ul style="list-style: none">
+          <li v-for="vh in vehicles">
+            {{ `${vh.vehicle.label} @ ${vh.timestamp}: ${vh.position.longitude.toFixed(4)}, ${vh.position.latitude.toFixed(4)}` }}
+          </li>
+        </ul>      
       </div>
       <div class="footer-sidebar" slot="footer">
       </div>
@@ -23,13 +30,13 @@
 </template>
 
 <script>
-let active = true;
-
 export default {    
-  data: function() {  
-    //let coords = [{ x: 5, y: 6 }];
-    let coords = this.$store.state.coordinates;
-    return { active, coords };  
+  data: function() {      
+    return { 
+      active: true,
+      vehicles: this.$store.state.vehicles,
+      coords: this.$store.state.coordinates
+    };  
   },
   methods: { 
     clicked() {
@@ -39,6 +46,7 @@ export default {
       state.coordinates.forEach( coord => {
         console.log(`${coord.x}, ${coord.y}`);
       })
+      console.log(this.vehicles.length);
     }
   }
 };
