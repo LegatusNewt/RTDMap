@@ -40,7 +40,7 @@ export default {
             .setHTML('<h3>Oops!</h3><p>You nudged it</p>');
 
         //Create markers based on coordinates in state
-        let i = 0;
+        /*let i = 0;
         state.coordinates.forEach(coord => {
             let marker = new mapboxgl.Marker()
                 .setLngLat([coord.x, coord.y])
@@ -56,6 +56,7 @@ export default {
             });
             state.markers.push(marker);
         });        
+        */
 
         state.map.on('load', () => {  
             axios.get('http://192.168.0.197:3000/data')
@@ -77,6 +78,16 @@ export default {
                 }).catch( err => {
                     console.log(err);
                 });
+        });
+
+        state.map.on('click', 'GTFS', e => {
+            let coordinates = e.features[0].geometry.coordinates.slice();
+            let description = e.features[0].properties.vehicle;
+
+            new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(description)
+            .addTo(state.map);
         });
     }
 };

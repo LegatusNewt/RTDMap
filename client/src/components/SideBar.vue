@@ -10,19 +10,18 @@
           RTD Transit
         </h4>
       </div>
-      <div class="body-sidebar">
-        <h4>Markers</h4>
-        <ul style="list-style: none">
-          <li v-for="coord in coords">
-            {{ `${coord.x.toFixed(4)} , ${coord.y.toFixed(4)}` }}
-          </li>        
-        </ul>
+      <div class="body-sidebar">    
         <h4>Transit</h4>
-        <ul style="list-style: none">
-          <li v-for="vh in vehicles">
-            {{ `${vh.vehicle.label} @ ${vh.timestamp}: ${vh.position.longitude.toFixed(4)}, ${vh.position.latitude.toFixed(4)}` }}
-          </li>
-        </ul>      
+        <vs-sidebar-group title="Vehicles">
+          <vs-sidebar-item index="1">
+            Dashboard
+          </vs-sidebar-item>
+          <ul style="list-style: none">
+            <li v-for="vh in vehicles">
+              {{ `${vh.vehicle.label}: ${vh.position.longitude.toFixed(4)}, ${vh.position.latitude.toFixed(4)}` }}
+            </li>
+          </ul> 
+        </vs-sidebar-group>     
       </div>
       <div class="footer-sidebar" slot="footer">
       </div>

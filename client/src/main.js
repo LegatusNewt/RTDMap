@@ -4,9 +4,11 @@ import Vuesax from 'vuesax'
 import App from './App.vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import vuetify from './plugins/vuetify';
 
 Vue.use(Vuesax);
 Vue.use(Vuex);
+Vue.use(vuetify);
 
 Vue.config.productionTip = false
 
@@ -50,7 +52,7 @@ const store = new Vuex.Store({
   actions: {
     update ({ commit }) {
       setInterval(() => {
-        axios.get('http://192.168.0.197:3000/data/feed').then( response => {
+        axios.get('http://192.168.0.197:3000/data').then( response => {
           commit('updateLayer', response.data)
         });        
       }, 60000);
@@ -60,8 +62,9 @@ const store = new Vuex.Store({
 });
 
 new Vue({
-  store,  
-  render: h => h(App),
+  store,
+  vuetify,
+  render: h => h(App)
 }).$mount('#app')
 
 
