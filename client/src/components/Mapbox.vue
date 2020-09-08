@@ -81,13 +81,7 @@ export default {
         });
 
         state.map.on('click', 'GTFS', e => {
-            let coordinates = e.features[0].geometry.coordinates.slice();
-            let description = e.features[0].properties.vehicle;
-
-            new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(description)
-            .addTo(state.map);
+            this.$store.commit('showTargetDeets',  JSON.parse(e.features[0].properties.vehicle).id);
         });
     }
 };

@@ -5,6 +5,7 @@ import App from './App.vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import vuetify from './plugins/vuetify';
+import 'material-icons/iconfont/material-icons.css';
 
 Vue.use(Vuesax);
 Vue.use(Vuex);
@@ -23,6 +24,26 @@ const store = new Vuex.Store({
     ]
   },
   mutations: {
+    showTargetDeets (state, vhID) {
+      let vh = state.vehicles.find( x => x.id == vhID);
+      let coordinates = [vh.position.longitude, vh.position.latitude]
+      let description = vh.id;
+      
+      //let coordinates = e.features[0].geometry.coordinates.slice();
+      //let description = e.features[0].properties.vehicle;
+
+      new mapboxgl.Popup()
+      .setLngLat(coordinates)
+      .setHTML(description)
+      .addTo(state.map);
+    },
+    targetAquired (state,target) {
+      state.map.flyTo({
+        center: [target.position.longitude, target.position.latitude],
+        zoom: 15
+      });      
+      this.commit("showTargetDeets", target.vehicle.id);
+    },
     nudge (state, index) {      
       let newX = state.coordinates[index].x + 0.01;
       let newY = state.coordinates[index].y + 0.01;
@@ -38,9 +59,11 @@ const store = new Vuex.Store({
     },
     updateLayer(state, data) {
       //Gather vehicle objects from geoJSON
+      let mapVehicles = new Map();
       let listVehicles = [];
       data.features.forEach( feat => {
-        listVehicles.push(parseVehicle(feat));
+        let vh = parseVehicle(feat);
+        listVehicles.push(vh);
       });
       state.vehicles.splice(0, state.vehicles.length, ...listVehicles);
       //state.geoJson.map(data);
@@ -70,6 +93,7 @@ new Vue({
 
 function parseVehicle(geoJSON){
   const vObject = {
+    id: geoJSON.properties.vehicle.id,
     position: geoJSON.properties.position,
     vehicle: geoJSON.properties.vehicle,
     timestamp: new Date().toTimeString()

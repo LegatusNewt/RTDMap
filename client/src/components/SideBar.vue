@@ -13,12 +13,21 @@
       <div class="body-sidebar">    
         <h4>Transit</h4>
         <vs-sidebar-group title="Vehicles">
-          <vs-sidebar-item index="1">
-            Dashboard
-          </vs-sidebar-item>
           <ul style="list-style: none">
             <li v-for="vh in vehicles">
-              {{ `${vh.vehicle.label}: ${vh.position.longitude.toFixed(4)}, ${vh.position.latitude.toFixed(4)}` }}
+               <vs-card>
+               <div style="display:flex">
+                  <div style="display:grid">
+                    <span>
+                      {{ `ID: ${vh.vehicle.label}` }}
+                    </span>
+                    <span>
+                      {{ `Pos: ${vh.position.longitude.toFixed(4)}, ${vh.position.latitude.toFixed(4)}` }}
+                    </span>
+                  </div>
+                  <vs-button color="primary" v-on:click='findTarget(vh)' icon="gps_fixed"></vs-button>
+                </div>
+              </vs-card>
             </li>
           </ul> 
         </vs-sidebar-group>     
@@ -46,6 +55,10 @@ export default {
         console.log(`${coord.x}, ${coord.y}`);
       })
       console.log(this.vehicles.length);
+    },
+    findTarget(vh) {      
+      console.log(`${vh.position.latitude} : ${vh.position.longitude}`);
+      this.$store.commit('targetAquired', vh);
     }
   }
 };
