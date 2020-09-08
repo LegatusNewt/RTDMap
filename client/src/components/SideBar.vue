@@ -17,7 +17,9 @@
             <li v-for="vh in vehicles">
                <vs-card>
                <div style="display:flex">
-                  <div style="display:grid">
+                  <img v-if="vh.icon == 'tram-black'" src="/tram2x.png">                                      
+                  <img v-if="vh.icon == 'bus-black'" src="/bus2x.png">
+                  <div style="display:grid">                  
                     <span>
                       {{ `ID: ${vh.vehicle.label}` }}
                     </span>

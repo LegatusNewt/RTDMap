@@ -35,6 +35,14 @@ async function fromFile(req, res, err) {
     feed.entity.forEach(function(entity) {
         if (entity.vehicle.position) {
             let vehicle = GeoJSON.parse(entity.vehicle, {Point: ['position.latitude','position.longitude']});
+            
+            //Determine if train or bus?
+            if(isNaN(vehicle.properties.vehicle.id)){
+                vehicle.properties.icon = 'tram-black';
+            } else{
+                vehicle.properties.icon = 'bus-black';
+            }
+            
             vehicleArray.features.push(vehicle);
         }
     });                     

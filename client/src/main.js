@@ -29,9 +29,6 @@ const store = new Vuex.Store({
       let coordinates = [vh.position.longitude, vh.position.latitude]
       let description = vh.id;
       
-      //let coordinates = e.features[0].geometry.coordinates.slice();
-      //let description = e.features[0].properties.vehicle;
-
       new mapboxgl.Popup()
       .setLngLat(coordinates)
       .setHTML(description)
@@ -93,6 +90,7 @@ new Vue({
 
 function parseVehicle(geoJSON){
   const vObject = {
+    icon: geoJSON.properties.icon,
     id: geoJSON.properties.vehicle.id,
     position: geoJSON.properties.position,
     vehicle: geoJSON.properties.vehicle,

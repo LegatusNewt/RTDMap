@@ -58,17 +58,28 @@ export default {
         });        
         */
 
-        state.map.on('load', () => {  
+
+
+        state.map.on('load', () => {
+            state.map.loadImage('./tram-black.png', function(error, image) {
+                if(error) throw error;
+                state.map.addImage('tram-black', image);
+            });
+            state.map.loadImage('./bus.png', function(error, image) {
+                if(error) throw error;
+                state.map.addImage('bus-black', image);
+            });
             axios.get('http://192.168.0.197:3000/data')
                 .then( response => {
                     let layer = { 
                         id: 'GTFS', 
-                        type: 'circle',
+                        type: 'symbol',
                         source: { 
                             type: 'geojson', 
                             data: null
                         },
                         layout: {
+                            'icon-image': '{icon}',
                             visibility: 'visible'
                         }
                     }
