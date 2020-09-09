@@ -1,21 +1,26 @@
 <template>
-    <body>
-        <div id="map"></div>
-    </body>
+<body>
+    <div id="map"></div>
+</body>
 </template>
 
 <style>
-  body {
+
+.mapboxgl-popup-content {
+    box-shadow: 4px 4px #67EEC3AA;
+}
+
+body {
     margin: 0;
     padding: 0;
-  }
+}
 
-  #map {
+#map {
     position: absolute;
     top: 0;
     bottom: 0;
     width: 100%;
-  }
+}
 </style>
 
 <script>
@@ -23,8 +28,8 @@ import axios from 'axios'
 
 export default {
     mounted() {
-        let state = this.$store.state;                    
-        state.markers = [];    
+        let state = this.$store.state;
+        state.markers = [];
 
         mapboxgl.accessToken =
             "pk.eyJ1Ijoia2xhbWFyY2EiLCJhIjoiY2p5a3plOTY0MDMydDNpbzNsMDQ3ZWV2cyJ9.EA8hlPf4fj0wLkT0J0ozkA";
@@ -33,7 +38,7 @@ export default {
             style: "mapbox://styles/mapbox/streets-v11", // stylesheet location
             center: [-104.99, 39.73], // starting position [lng, lat]
             zoom: 10 // starting zoom
-        });  
+        });
 
         //Create popup 
         let popup = new mapboxgl.Popup()
@@ -58,24 +63,22 @@ export default {
         });        
         */
 
-
-
         state.map.on('load', () => {
-            state.map.loadImage('./tram-black.png', function(error, image) {
-                if(error) throw error;
+            state.map.loadImage('./tram-black.png', function (error, image) {
+                if (error) throw error;
                 state.map.addImage('tram-black', image);
             });
-            state.map.loadImage('./bus.png', function(error, image) {
-                if(error) throw error;
+            state.map.loadImage('./bus-black.png', function (error, image) {
+                if (error) throw error;
                 state.map.addImage('bus-black', image);
             });
             axios.get('http://192.168.0.197:3000/data')
-                .then( response => {
-                    let layer = { 
-                        id: 'GTFS', 
+                .then(response => {
+                    let layer = {
+                        id: 'GTFS',
                         type: 'symbol',
-                        source: { 
-                            type: 'geojson', 
+                        source: {
+                            type: 'geojson',
                             data: null
                         },
                         layout: {
@@ -86,13 +89,13 @@ export default {
                     state.map.addLayer(layer);
                     this.$store.commit('updateLayer', response.data);
                     this.$store.dispatch('update')
-                }).catch( err => {
+                }).catch(err => {
                     console.log(err);
                 });
         });
 
         state.map.on('click', 'GTFS', e => {
-            this.$store.commit('showTargetDeets',  JSON.parse(e.features[0].properties.vehicle).id);
+            this.$store.commit('showTargetDeets', JSON.parse(e.features[0].properties.vehicle).id);
         });
     }
 };

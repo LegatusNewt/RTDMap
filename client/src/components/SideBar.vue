@@ -4,7 +4,7 @@
     </div>
     <vs-sidebar parent="body" v-else-if="this.active" default-index="1" color="primary" class="sidebarx" spacer v-model="this.active">      
       <div class="header-sidebar" slot="header">
-        <vs-button class="toggle-sidebar" v-on:click='clicked()'/>
+        <vs-button type="border" class="toggle-sidebar" icon="close" v-on:click='clicked()'></vs-button>
         <vs-avatar class="flag-avatar" src="./denver.png"/>
         <h4>
           RTD Transit
@@ -17,8 +17,7 @@
             <li v-for="vh in vehicles">
                <vs-card>
                <div style="display:flex">
-                  <img v-if="vh.icon == 'tram-black'" src="/tram2x.png">                                      
-                  <img v-if="vh.icon == 'bus-black'" src="/bus2x.png">
+                  <img v-bind:src="`${vh.icon}2x.png`">                                      
                   <div style="display:grid">                  
                     <span>
                       {{ `ID: ${vh.vehicle.label}` }}
@@ -27,7 +26,7 @@
                       {{ `Pos: ${vh.position.longitude.toFixed(4)}, ${vh.position.latitude.toFixed(4)}` }}
                     </span>
                   </div>
-                  <vs-button color="primary" v-on:click='findTarget(vh)' icon="gps_fixed"></vs-button>
+                  <vs-button type="border" class="primary-button" color="primary" v-on:click='findTarget(vh)' icon="gps_fixed"></vs-button>
                 </div>
               </vs-card>
             </li>
@@ -86,6 +85,31 @@ export default {
   left: 100%;
   height: 25px;
   width: 25px;
+}
+
+/*Remove stupid padding that's shifting things when opening sidebar*/
+.vs-sidebar-group.vs-sidebar-group-open>ul {
+  padding-left: 0px;
+}
+
+.vs-sidebar--items {  
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }
 
 .vs-sidebar--background {

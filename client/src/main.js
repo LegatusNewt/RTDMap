@@ -6,10 +6,13 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import vuetify from './plugins/vuetify';
 import 'material-icons/iconfont/material-icons.css';
+import vPopup from './components/MapPopup.vue';
 
 Vue.use(Vuesax);
 Vue.use(Vuex);
 Vue.use(vuetify);
+
+const VuePopup = Vue.extend(vPopup);
 
 Vue.config.productionTip = false
 
@@ -27,11 +30,13 @@ const store = new Vuex.Store({
     showTargetDeets (state, vhID) {
       let vh = state.vehicles.find( x => x.id == vhID);
       let coordinates = [vh.position.longitude, vh.position.latitude]
-      let description = vh.id;
+      let data = { route: vh.trip ? vh.trip.routeId : 'OOS', vehicle: vh.vehicle.label }
       
+      const popup = new VuePopup({ propsData: data }).$mount().$el;
+
       new mapboxgl.Popup()
       .setLngLat(coordinates)
-      .setHTML(description)
+      .setHTML(popup.outerHTML)
       .addTo(state.map);
     },
     targetAquired (state,target) {
@@ -89,13 +94,14 @@ new Vue({
 
 
 function parseVehicle(geoJSON){
-  const vObject = {
+  const vObject = {    
     icon: geoJSON.properties.icon,
     id: geoJSON.properties.vehicle.id,
     position: geoJSON.properties.position,
     vehicle: geoJSON.properties.vehicle,
+    trip: geoJSON.properties.trip,
     timestamp: new Date().toTimeString()
-  };
+  };  
   return vObject;
 }
 
