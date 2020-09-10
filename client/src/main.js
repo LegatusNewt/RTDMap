@@ -13,6 +13,7 @@ Vue.use(Vuex);
 Vue.use(vuetify);
 
 const VuePopup = Vue.extend(vPopup);
+const connString = 'http://192.168.0.197:3000';
 
 Vue.config.productionTip = false
 
@@ -20,6 +21,7 @@ const store = new Vuex.Store({
   state: {
     count: 0,  
     vehicles: [],
+    routes: { type: "FeatureCollection", features: [] },
     geoJson: {},
     coordinates: [
       { x: -104.9293, y: 39.6984},
@@ -32,12 +34,15 @@ const store = new Vuex.Store({
       let coordinates = [vh.position.longitude, vh.position.latitude]
       let data = { route: vh.trip ? vh.trip.routeId : 'OOS', vehicle: vh.vehicle.label }
       
-      const popup = new VuePopup({ propsData: data }).$mount().$el;
+      const popup = new VuePopup({ store: store, propsData: data });
 
-      new mapboxgl.Popup()
+      const poppy = new mapboxgl.Popup()
       .setLngLat(coordinates)
-      .setHTML(popup.outerHTML)
+      .setHTML(`${popup.innerHTML}<div id="poppy${vhID}"</div>`) //hacky      
       .addTo(state.map);
+
+      popup.$mount(`#poppy${vhID}`);
+      poppy._update();
     },
     targetAquired (state,target) {
       state.map.flyTo({
@@ -59,6 +64,12 @@ const store = new Vuex.Store({
         state.coordinates[index].y
       ]);
     },
+    updateRoutes(state, data) {
+      let currentState = state.routes;
+      currentState.features.push( data ); //don't know route or trip id yet      
+      Vue.set(state, 'Routes', currentState);
+      state.map.getSource('Routes').setData(currentState);
+    },
     updateLayer(state, data) {
       //Gather vehicle objects from geoJSON
       let mapVehicles = new Map();
@@ -75,9 +86,14 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    getShape({ commit }) {
+      axios.get(`${connString}/routes/shape/1`).then( response => {
+        commit('updateRoutes', response.data)
+      });
+    },
     update ({ commit }) {
       setInterval(() => {
-        axios.get('http://192.168.0.197:3000/data').then( response => {
+        axios.get(`${connString}/data`).then( response => {
           commit('updateLayer', response.data)
         });        
       }, 60000);

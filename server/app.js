@@ -6,8 +6,8 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 const dataRouter = require('./routes/data');
+const routeRouter = require('./routes/routes');
 
 global.appRoot = path.resolve(__dirname);
 
@@ -20,8 +20,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/data', dataRouter);
+app.use('/routes', routeRouter); //lol route router.
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

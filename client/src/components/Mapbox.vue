@@ -91,12 +91,33 @@ export default {
                     this.$store.dispatch('update')
                 }).catch(err => {
                     console.log(err);
-                });
+                });                 
+
+            routeLayer();   
         });
 
         state.map.on('click', 'GTFS', e => {
             this.$store.commit('showTargetDeets', JSON.parse(e.features[0].properties.vehicle).id);
         });
-    }
+
+        state.map.on('click', 'Routes', e=> {
+            console.log(`Clicked a route : ${e.id}`);
+        });
+
+        function routeLayer() {
+            let layer = {
+                id: 'Routes',
+                type: 'line',
+                source: {
+                    type: 'geojson',
+                    data: null
+                },
+                layout: {
+                    visibility: 'visible'
+                }
+            }
+            state.map.addLayer(layer);
+        }
+    }    
 };
 </script>
