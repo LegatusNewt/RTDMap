@@ -19,6 +19,7 @@ Vue.config.productionTip = false
 
 const store = new Vuex.Store({
   state: {
+    filters: ["all"],
     count: 0,  
     vehicles: [],
     routes: { type: "FeatureCollection", features: [] },
@@ -64,9 +65,28 @@ const store = new Vuex.Store({
         state.coordinates[index].y
       ]);
     },
+    toggleRoute(state, data) {
+      let currentState = state.routes;
+      let index = currentState.features.find( x=> x.id === data.id );      
+      let currentFilter = state.filters;
+      if(index > -1){
+        if(currentState.features[index].visible == true){
+          currentState.features[index].visible = false;
+          currentFilter.push(["!=", "id", `${currentState.features[index].id}`]);          
+        } else {
+          currentState.features[index].visible = true;
+          currentFilter.remove( x => { x.includes(`${currentState.features[index].id}`) } );        
+        }
+        Vue.set(state, 'filters', currentFilter);
+        Vue.set(state, 'Routes', currentState);
+        state.map.setFilter( 'Routes', currentFilter );
+      }      
+    },
     updateRoutes(state, data) {
       let currentState = state.routes;
-      currentState.features.push( data ); //don't know route or trip id yet      
+      if(currentState.features.findIndex( x => x.id === data.id ) === -1){
+        currentState.features.push( { ...data, visible: true } ); //don't know route or trip id yet
+      }      
       Vue.set(state, 'Routes', currentState);
       state.map.getSource('Routes').setData(currentState);
     },
