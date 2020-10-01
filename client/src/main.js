@@ -22,7 +22,7 @@ const store = new Vuex.Store({
     filters: ["all"],
     count: 0,  
     vehicles: [],
-    routes: { type: "FeatureCollection", features: [] },
+    trips: { type: "FeatureCollection", features: [] },
     geoJson: {},
     coordinates: [
       { x: -104.9293, y: 39.6984},
@@ -33,7 +33,8 @@ const store = new Vuex.Store({
     showTargetDeets (state, vhID) {
       let vh = state.vehicles.find( x => x.id == vhID);
       let coordinates = [vh.position.longitude, vh.position.latitude]
-      let data = { route: vh.trip ? vh.trip.routeId : 'OOS', vehicle: vh.vehicle.label }
+      //tripId is undefined when no route. Shape not in trip object
+      let data = { route: vh.trip ? vh.trip.routeId : 'OOS', vehicle: vh.vehicle.label, tripId: vh.trip.tripId, shapeId: vh.trip.shapeId }
       
       const popup = new VuePopup({ store: store, propsData: data });
 
@@ -65,11 +66,12 @@ const store = new Vuex.Store({
         state.coordinates[index].y
       ]);
     },
-    toggleRoute(state, data) {
-      let currentState = state.routes;
+    toggleShape(state, data) {
+      let currentState = state.trips;
       let index = currentState.features.find( x=> x.id === data.id );      
       let currentFilter = state.filters;
       if(index > -1){
+        //This logic is messy.
         if(currentState.features[index].visible == true){
           currentState.features[index].visible = false;
           currentFilter.push(["!=", "id", `${currentState.features[index].id}`]);          
@@ -78,17 +80,17 @@ const store = new Vuex.Store({
           currentFilter.remove( x => { x.includes(`${currentState.features[index].id}`) } );        
         }
         Vue.set(state, 'filters', currentFilter);
-        Vue.set(state, 'Routes', currentState);
-        state.map.setFilter( 'Routes', currentFilter );
+        Vue.set(state, 'trips', currentState);
+        state.map.setFilter( 'trips', currentFilter );
       }      
     },
     updateRoutes(state, data) {
-      let currentState = state.routes;
+      let currentState = state.trips;
       if(currentState.features.findIndex( x => x.id === data.id ) === -1){
         currentState.features.push( { ...data, visible: true } ); //don't know route or trip id yet
       }      
-      Vue.set(state, 'Routes', currentState);
-      state.map.getSource('Routes').setData(currentState);
+      Vue.set(state, 'trips', currentState);
+      state.map.getSource('Trips').setData(currentState);
     },
     updateLayer(state, data) {
       //Gather vehicle objects from geoJSON
@@ -106,8 +108,8 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    getShape({ commit }) {
-      axios.get(`${connString}/routes/shape/1`).then( response => {
+    getShape({ commit }, shapeId) {
+      axios.get(`${connString}/routes/shapes`, { params: { shapeId : shapeId }} ).then( response => {
         commit('updateRoutes', response.data)
       });
     },

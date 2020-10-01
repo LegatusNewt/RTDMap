@@ -100,13 +100,13 @@ export default {
             this.$store.commit('showTargetDeets', JSON.parse(e.features[0].properties.vehicle).id);
         });
 
-        state.map.on('click', 'Routes', e=> {
+        state.map.on('click', 'Trips', e=> {
             console.log(`Clicked a route : ${e.id}`);
         });
 
         function routeLayer() {
             let layer = {
-                id: 'Routes',
+                id: 'Trips',
                 type: 'line',
                 source: {
                     type: 'geojson',
