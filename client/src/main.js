@@ -13,22 +13,23 @@ Vue.use(Vuex);
 Vue.use(vuetify);
 
 const VuePopup = Vue.extend(vPopup);
-const connString = 'http://192.168.0.197:3000';
+const connString = 'http://192.168.185.243:3000';
 
 Vue.config.productionTip = false
 
-const store = new Vuex.Store({
+const store = new Vuex.Store({ 
   state: {
     filters: ["all"],
     count: 0,  
     vehicles: [],
-    trips: { type: "FeatureCollection", features: [] },
+    routes: [],
+    tripShapes: { type: "FeatureCollection", features: [] },
     geoJson: {},
     coordinates: [
       { x: -104.9293, y: 39.6984},
       { x: -104.9185, y: 39.6874}       
     ]
-  },
+  },  
   mutations: {
     showTargetDeets (state, vhID) {
       let vh = state.vehicles.find( x => x.id == vhID);
@@ -40,7 +41,7 @@ const store = new Vuex.Store({
 
       const poppy = new mapboxgl.Popup()
       .setLngLat(coordinates)
-      .setHTML(`${popup.innerHTML}<div id="poppy${vhID}"</div>`) //hacky      
+      .setHTML(`<div id="poppy${vhID}"</div>`) //hacky      
       .addTo(state.map);
 
       popup.$mount(`#poppy${vhID}`);
@@ -67,7 +68,7 @@ const store = new Vuex.Store({
       ]);
     },
     toggleShape(state, data) {
-      let currentState = state.trips;
+      let currentState = state.tripShapes;
       let index = currentState.features.find( x=> x.id === data.id );      
       let currentFilter = state.filters;
       if(index > -1){
@@ -80,17 +81,20 @@ const store = new Vuex.Store({
           currentFilter.remove( x => { x.includes(`${currentState.features[index].id}`) } );        
         }
         Vue.set(state, 'filters', currentFilter);
-        Vue.set(state, 'trips', currentState);
-        state.map.setFilter( 'trips', currentFilter );
+        Vue.set(state, 'tripShapes', currentState);
+        state.map.setFilter( 'tripShapes', currentFilter );
       }      
     },
-    updateRoutes(state, data) {
+    updateTripShpae(state, data) {
       let currentState = state.trips;
       if(currentState.features.findIndex( x => x.id === data.id ) === -1){
         currentState.features.push( { ...data, visible: true } ); //don't know route or trip id yet
       }      
-      Vue.set(state, 'trips', currentState);
+      Vue.set(state, 'tripShapes', currentState);
       state.map.getSource('Trips').setData(currentState);
+    },
+    updateRoutes(state, data) {
+      Vue.set(state, 'routes', data);      
     },
     updateLayer(state, data) {
       //Gather vehicle objects from geoJSON
@@ -110,7 +114,7 @@ const store = new Vuex.Store({
   actions: {
     getShape({ commit }, shapeId) {
       axios.get(`${connString}/routes/shapes`, { params: { shapeId : shapeId }} ).then( response => {
-        commit('updateRoutes', response.data)
+        commit('updateTripShpae', response.data)
       });
     },
     update ({ commit }) {
@@ -119,17 +123,28 @@ const store = new Vuex.Store({
           commit('updateLayer', response.data)
         });        
       }, 60000);
+    },
+    updateRoutes ({ commit }) {
+      axios.get(`${connString}/routes`).then( response => {
+        commit('updateRoutes', response.data)        
+      });
+      setInterval(() => {
+        axios.get(`${connString}/routes`).then( response => {
+          commit('updateRoutes', response.data)        
+        });
+      }, 60000*5);
     }
   }
-
 });
 
 new Vue({
   store,
   vuetify,
-  render: h => h(App)
+  render: h => h(App),
+  mounted() {
+    this.$store.dispatch('updateRoutes');
+  }
 }).$mount('#app')
-
 
 function parseVehicle(geoJSON){
   const vObject = {    

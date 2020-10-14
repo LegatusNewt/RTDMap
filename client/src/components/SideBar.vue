@@ -14,7 +14,7 @@
         <h4>Transit</h4>
         <vs-sidebar-group title="Vehicles">
           <ul style="list-style: none">
-            <li v-for="vh in vehicles">
+            <li v-for="vh in vehicles" :key="vh.vehicle.label">
                <vs-card>
                <div style="display:flex">
                   <img v-bind:src="`${vh.icon}2x.png`">                                      
@@ -31,7 +31,18 @@
               </vs-card>
             </li>
           </ul> 
-        </vs-sidebar-group>     
+        </vs-sidebar-group>
+        <vs-sidebar-group title="Routes">
+          <ul style="list-style: none">
+            <li v-for="rt in routes" :key="rt.route_id">
+               <vs-card v-bind:style="{ background: `#${rt.route_color}` }" >
+              <div style="display:flex">
+                {{ `${rt.route_short_name}` }}
+              </div>
+              </vs-card>
+            </li>
+          </ul> 
+        </vs-sidebar-group>    
       </div>
       <div class="footer-sidebar" slot="footer">
       </div>
@@ -44,6 +55,7 @@ export default {
     return { 
       active: true,
       vehicles: this.$store.state.vehicles,
+      routes: this.$store.state.routes,
       coords: this.$store.state.coordinates
     };  
   },

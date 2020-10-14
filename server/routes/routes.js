@@ -41,7 +41,6 @@ async function getRoute(req, res, err) {
         const routes = await collection.find({ agency_id: 'RTD' }).toArray();
 
         return res.status(200).send(routes);
-        //Parse them ????
     } catch(exception) {
         return res.status(500).send(exception);
     }
