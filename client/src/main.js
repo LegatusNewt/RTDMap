@@ -13,12 +13,14 @@ Vue.use(Vuex);
 Vue.use(vuetify);
 
 const VuePopup = Vue.extend(vPopup);
-const connString = 'http://192.168.185.243:3000';
+const connString = 'http://justinian.local:3000';
 
 Vue.config.productionTip = false
 
 const store = new Vuex.Store({ 
   state: {
+    infoVisible: true,
+    infoData: {},
     filters: ["all"],
     count: 0,  
     vehicles: [],
@@ -46,6 +48,13 @@ const store = new Vuex.Store({
 
       popup.$mount(`#poppy${vhID}`);
       poppy._update();
+    },
+    openInfo(state, route) {
+      Vue.set(state, 'infoData', route);
+      Vue.set(state, 'infoVisible', true);      
+    },
+    hideInfo(state) {
+      state.infoVisible = false;
     },
     targetAquired (state,target) {
       state.map.flyTo({
@@ -94,7 +103,9 @@ const store = new Vuex.Store({
       state.map.getSource('Trips').setData(currentState);
     },
     updateRoutes(state, data) {
-      Vue.set(state, 'routes', data);      
+      //Sort Routes by Color
+      data.sort( (a,b) => (a.route_color < b.route_color) ? 1 : -1 );
+      state.routes.splice(0, state.routes.length, ...data);
     },
     updateLayer(state, data) {
       //Gather vehicle objects from geoJSON
@@ -141,7 +152,7 @@ new Vue({
   store,
   vuetify,
   render: h => h(App),
-  mounted() {
+  created() {
     this.$store.dispatch('updateRoutes');
   }
 }).$mount('#app')

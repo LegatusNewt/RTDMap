@@ -35,10 +35,11 @@
         <vs-sidebar-group title="Routes">
           <ul style="list-style: none">
             <li v-for="rt in routes" :key="rt.route_id">
-               <vs-card v-bind:style="{ background: `#${rt.route_color}` }" >
+              <vs-card v-bind:style="{ background: `#${rt.route_color}` }">
               <div style="display:flex">
                 {{ `${rt.route_short_name}` }}
               </div>
+              <vs-button type="border" class="primary-button" color="primary" v-on:click='routeDetails(rt)' icon="gps_fixed"></vs-button>
               </vs-card>
             </li>
           </ul> 
@@ -72,6 +73,9 @@ export default {
     findTarget(vh) {      
       console.log(`${vh.position.latitude} : ${vh.position.longitude}`);
       this.$store.commit('targetAquired', vh);
+    },
+    routeDetails(rt) {
+      this.$store.commit('openInfo', rt);
     }
   }
 };
