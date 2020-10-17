@@ -19,7 +19,7 @@ Vue.config.productionTip = false
 
 const store = new Vuex.Store({ 
   state: {
-    infoVisible: true,
+    infoVisible: false,
     infoData: {},
     filters: ["all"],
     count: 0,  
@@ -54,7 +54,7 @@ const store = new Vuex.Store({
       Vue.set(state, 'infoVisible', true);      
     },
     hideInfo(state) {
-      state.infoVisible = false;
+      Vue.set(state, 'infoVisible', false);
     },
     targetAquired (state,target) {
       state.map.flyTo({

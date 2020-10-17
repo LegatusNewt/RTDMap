@@ -35,11 +35,11 @@
         <vs-sidebar-group title="Routes">
           <ul style="list-style: none">
             <li v-for="rt in routes" :key="rt.route_id">
-              <vs-card v-bind:style="{ background: `#${rt.route_color}` }">
+              <vs-card>
               <div style="display:flex">
-                {{ `${rt.route_short_name}` }}
+              <vs-button class="route-title" v-on:click='routeDetails(rt)' color={rt.route_color}>{{ `${rt.route_short_name}` }}</vs-button>
+              <!--vs-button type="relief" style="align-self: center" color="primary" v-on:click='routeDetails(rt)' icon="menu"></vs-button-->
               </div>
-              <vs-button type="border" class="primary-button" color="primary" v-on:click='routeDetails(rt)' icon="gps_fixed"></vs-button>
               </vs-card>
             </li>
           </ul> 
@@ -130,6 +130,22 @@ export default {
 
 .vs-sidebar--background {
   width: 0px;
+}
+
+.route-title {
+  width: 100%;
+  border-radius: 10px;
+  text-align: center;
+  font-size: larger;
+  font-weight: bold;
+  font-family: sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  text-overflow: clip; 
+  box-shadow: -3px 3px 5px 1px grey;
+  padding: 5px;
 }
 
 .flag-avatar {
