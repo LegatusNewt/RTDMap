@@ -49,14 +49,17 @@ async function getRoute(req, res, err) {
 
 router.get('/trips', getTrip);
 async function getTrip(req, res, err) {    
-    let tripId = req.query.tripId;
+    try {
+        let client = await mongo.get();
+        const database = client.db('GTFS');
+        const collection = database.collection('Trips');
+        
+        const trips = await collection.find({ route_id: req.query.routeId }).toArray();
 
-    try{
-        const query = tripId ? { id: shapeId } : {};
+        return res.status(200).send(trips);
     } catch(exception) {
         return res.status(500).send(exception);
     }
-    return res.status(501).send('Nope sir');
 }
 
 

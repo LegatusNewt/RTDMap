@@ -25,6 +25,7 @@ const store = new Vuex.Store({
     count: 0,  
     vehicles: [],
     routes: [],
+    trips: {},
     tripShapes: { type: "FeatureCollection", features: [] },
     geoJson: {},
     coordinates: [
@@ -50,7 +51,7 @@ const store = new Vuex.Store({
       poppy._update();
     },
     openInfo(state, route) {
-      Vue.set(state, 'infoData', route);
+      Vue.set(state, 'infoData', { route: route, trips: state.trips[route.route_id]});
       Vue.set(state, 'infoVisible', true);      
     },
     hideInfo(state) {
@@ -120,9 +121,18 @@ const store = new Vuex.Store({
       Vue.set(state, 'geoJson', data);
       state.map.getSource('GTFS').setData(data);      
       console.log('Update');
+    },
+    updateTripState(state, data) {
+      let currentTrips = state.trips;
+      currentTrips[data.routeId] = data.response;
+      Vue.set(state, 'trips', currentTrips); 
     }
   },
   actions: {
+    fetchRouteInfo( {dispatch, commit}, routeId) {
+      dispatch('getTrips', routeId);
+      commit('openInfo', routeId);
+    },
     getShape({ commit }, shapeId) {
       axios.get(`${connString}/routes/shapes`, { params: { shapeId : shapeId }} ).then( response => {
         commit('updateTripShpae', response.data)
@@ -144,6 +154,12 @@ const store = new Vuex.Store({
           commit('updateRoutes', response.data)        
         });
       }, 60000*5);
+    },
+    getTrips({ commit }, route) {
+      axios.get(`${connString}/routes/trips`, { params: { routeId: route.route_id }} ).then( response => {
+        let data = { routeId: route.route_id, response: response.data };
+        commit('updateTripState', data);
+      })
     }
   }
 });

@@ -37,8 +37,7 @@
             <li v-for="rt in routes" :key="rt.route_id">
               <vs-card>
               <div style="display:flex">
-              <vs-button class="route-title" v-on:click='routeDetails(rt)' color={rt.route_color}>{{ `${rt.route_short_name}` }}</vs-button>
-              <!--vs-button type="relief" style="align-self: center" color="primary" v-on:click='routeDetails(rt)' icon="menu"></vs-button-->
+                <vs-button class="route-title" v-bind:style="{ backgroundColor: `#${rt.route_color}`}" type=Border  v-on:click='routeDetails(rt)'>{{ `${rt.route_short_name}` }}</vs-button>              
               </div>
               </vs-card>
             </li>
@@ -75,7 +74,7 @@ export default {
       this.$store.commit('targetAquired', vh);
     },
     routeDetails(rt) {
-      this.$store.commit('openInfo', rt);
+      this.$store.dispatch('fetchRouteInfo', rt);
     }
   }
 };
@@ -142,7 +141,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 1rem;
   text-overflow: clip; 
   box-shadow: -3px 3px 5px 1px grey;
   padding: 5px;
