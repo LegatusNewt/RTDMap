@@ -55,7 +55,7 @@ export default {
     return { 
       active: true,
       vehicles: this.$store.state.vehicles,
-      routes: this.$store.state.routes,
+      routes: this.$store.state.rModule.routes,
       coords: this.$store.state.coordinates
     };  
   },
@@ -74,7 +74,8 @@ export default {
       this.$store.commit('targetAquired', vh);
     },
     routeDetails(rt) {
-      this.$store.dispatch('fetchRouteInfo', rt);
+      this.$store.dispatch('rModule/getTrips', rt);
+      this.$store.commit('rModule/openInfo', rt);
     }
   }
 };

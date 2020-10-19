@@ -19,18 +19,18 @@ export default {
   computed: {    
     active: {
         get: function () {
-          return this.$store.state.infoVisible;
+          return this.$store.state.rModule.infoVisible;
         },
         set: function () {
-          return this.$store.commit('hideInfo');
+          return this.$store.commit('rModule/hideInfo');
         }
     },
     route () {
-        return this.$store.state.infoData.route;
+        return this.$store.state.rModule.infoData.route;
     },
     trips: {
       get: function() {        
-        return this.$store.state.trips[this.route.route_id] || [];
+        return this.$store.state.rModule.trips[this.route.route_id] || [];
       }
     }
   },

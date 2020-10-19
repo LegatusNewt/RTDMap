@@ -7,6 +7,7 @@ import axios from 'axios'
 import vuetify from './plugins/vuetify';
 import 'material-icons/iconfont/material-icons.css';
 import vPopup from './components/MapPopup.vue';
+import rModule from './modules/routes.js';
 
 Vue.use(Vuesax);
 Vue.use(Vuex);
@@ -18,14 +19,15 @@ const connString = 'http://justinian.local:3000';
 Vue.config.productionTip = false
 
 const store = new Vuex.Store({ 
-  state: {
-    infoVisible: false,
-    infoData: {},
+  modules: {
+    rModule: rModule
+  },
+  state: {    
     filters: ["all"],
     count: 0,  
     vehicles: [],
-    routes: [],
-    trips: {},
+    //routes: [],
+    //trips: {},
     tripShapes: { type: "FeatureCollection", features: [] },
     geoJson: {},
     coordinates: [
@@ -49,13 +51,6 @@ const store = new Vuex.Store({
 
       popup.$mount(`#poppy${vhID}`);
       poppy._update();
-    },
-    openInfo(state, route) {
-      Vue.set(state, 'infoData', { route: route, trips: state.trips[route.route_id]});
-      Vue.set(state, 'infoVisible', true);      
-    },
-    hideInfo(state) {
-      Vue.set(state, 'infoVisible', false);
     },
     targetAquired (state,target) {
       state.map.flyTo({
@@ -95,18 +90,13 @@ const store = new Vuex.Store({
         state.map.setFilter( 'tripShapes', currentFilter );
       }      
     },
-    updateTripShpae(state, data) {
+    updateTripShape(state, data) {
       let currentState = state.trips;
       if(currentState.features.findIndex( x => x.id === data.id ) === -1){
         currentState.features.push( { ...data, visible: true } ); //don't know route or trip id yet
       }      
       Vue.set(state, 'tripShapes', currentState);
       state.map.getSource('Trips').setData(currentState);
-    },
-    updateRoutes(state, data) {
-      //Sort Routes by Color
-      data.sort( (a,b) => (a.route_color < b.route_color) ? 1 : -1 );
-      state.routes.splice(0, state.routes.length, ...data);
     },
     updateLayer(state, data) {
       //Gather vehicle objects from geoJSON
@@ -121,21 +111,12 @@ const store = new Vuex.Store({
       Vue.set(state, 'geoJson', data);
       state.map.getSource('GTFS').setData(data);      
       console.log('Update');
-    },
-    updateTripState(state, data) {
-      let currentTrips = state.trips;
-      currentTrips[data.routeId] = data.response;
-      Vue.set(state, 'trips', currentTrips); 
     }
   },
-  actions: {
-    fetchRouteInfo( {dispatch, commit}, routeId) {
-      dispatch('getTrips', routeId);
-      commit('openInfo', routeId);
-    },
+  actions: {    
     getShape({ commit }, shapeId) {
       axios.get(`${connString}/routes/shapes`, { params: { shapeId : shapeId }} ).then( response => {
-        commit('updateTripShpae', response.data)
+        commit('updateTripShape', response.data)
       });
     },
     update ({ commit }) {
@@ -144,23 +125,7 @@ const store = new Vuex.Store({
           commit('updateLayer', response.data)
         });        
       }, 60000);
-    },
-    updateRoutes ({ commit }) {
-      axios.get(`${connString}/routes`).then( response => {
-        commit('updateRoutes', response.data)        
-      });
-      setInterval(() => {
-        axios.get(`${connString}/routes`).then( response => {
-          commit('updateRoutes', response.data)        
-        });
-      }, 60000*5);
-    },
-    getTrips({ commit }, route) {
-      axios.get(`${connString}/routes/trips`, { params: { routeId: route.route_id }} ).then( response => {
-        let data = { routeId: route.route_id, response: response.data };
-        commit('updateTripState', data);
-      })
-    }
+    }  
   }
 });
 
@@ -169,7 +134,7 @@ new Vue({
   vuetify,
   render: h => h(App),
   created() {
-    this.$store.dispatch('updateRoutes');
+    this.$store.dispatch('rModule/updateRoutes');
   }
 }).$mount('#app')
 
