@@ -15,18 +15,10 @@
         <vs-sidebar-group title="Vehicles">
           <ul style="list-style: none">
             <li v-for="vh in vehicles" :key="vh.vehicle.label">
-               <vs-card class="vh-card">
-                  <img class="vh-icon" v-bind:src="`${vh.icon}2x.png`">                                      
-                  <div class="vh-div" style="display:grid">                  
-                    <span class="vh-span">
-                      {{ `${vh.vehicle.label}` }}
-                    </span>                    
-                  </div>
-                  <vs-button type="border" class="vh-button" color="primary" v-on:click='findTarget(vh)' icon="gps_fixed"></vs-button>
-              </vs-card>
+               <VehicleCard v-bind:vh="vh"></VehicleCard>
             </li>
           </ul> 
-        </vs-sidebar-group>
+        </vs-sidebar-group>      
         <vs-sidebar-group title="Routes">
           <ul style="list-style: none">
             <li v-for="rt in routes" :key="rt.route_id">
@@ -45,7 +37,13 @@
 </template>
 
 <script>
+import VehicleCard from './VehicleCard'
+
 export default {    
+  name: 'SideBar',
+  components: {
+    VehicleCard
+  },
   data: function() {      
     return { 
       active: true,
@@ -97,35 +95,6 @@ export default {
   height: 25px;
   width: 25px;
 }
-
-.vh-card .vs-card--content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.vh-icon {
-  flex: 1;
-  max-width: fit-content;
-}
-
-.vh-div {
-  flex: 2;
-  max-width: fit-content;  
-}
-
-.vh-span {
-  text-align: center;
-  font-size: x-large;
-  font-weight: bold;
-  font-family: 'Roboto';
-}
-
-.vh-button {
-  flex: 1;
-  max-width: fit-content;
-}
-
 
 /*Remove stupid padding that's shifting things when opening sidebar*/
 .vs-sidebar-group.vs-sidebar-group-open>ul {
