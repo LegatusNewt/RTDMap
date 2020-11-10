@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-main>
+      <BottomBar/>
       <Mapbox/>
       <SideBar/>
       <InfoPopup/>
@@ -9,9 +10,10 @@
 </template>
 
 <script>
-import Mapbox from './components/Mapbox.vue'
-import SideBar from './components/SideBar.vue'
-import InfoPopup from './components/InfoPopup.vue'  
+import Mapbox from './components/Mapbox.vue';
+import SideBar from './components/SideBar.vue';
+import InfoPopup from './components/InfoPopup.vue' ; 
+import BottomBar from './components/BottomBar.vue';
 import 'material-icons/iconfont/material-icons.css';
 import Vuesax from 'vuesax'
 
@@ -21,7 +23,8 @@ export default {
   components: {
     Mapbox,
     SideBar,
-    InfoPopup
+    InfoPopup,
+    BottomBar
   },
 
   data: () => ({

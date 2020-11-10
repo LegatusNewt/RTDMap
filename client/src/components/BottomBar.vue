@@ -1,10 +1,13 @@
 <template lang="html">
-<vs-popup id="info" style='position: absolute' class='holamundo' title="Route Info" :active.sync="active">
+<div v-if="!this.sheet" class='bottom-mid'>      
+    <vs-button type="border" v-on:click='clicked()' icon="keyboard_arrow_up"></vs-button>
+</div>
+<v-bottom-sheet v-else-if="this.sheet" v-model="sheet" hide-overlay persistent>
+    <vs-button type="border" class="toggle-bbar" icon="close" v-on:click='clicked()'></vs-button>
     <div>
       <h2>{{`${route ? route.route_long_name : 'No Route'}`}}</h2>
-      <p>{{`${route ? route.route_desc : 'No Route'}`}}</p>
-      <p>{{`Data: ${JSON.stringify(route)}`}}</p>
-      <ul>
+      <p>{{`${route ? route.route_desc : 'No Route'}`}}</p>      
+      <ul class="v-bottom-list">
           <li v-for="v in vehicles" :key="v.id">          
               <VehicleCard v-bind:vh="v"></VehicleCard>
           </li>
@@ -13,15 +16,15 @@
     <div>
 
     </div>
-</vs-popup>
+</v-bottom-sheet>
 </template>
 
 <script>
-
 import { state } from 'vuex';
 import VehicleCard from './VehicleCard'
 
-export default {  
+export default {    
+  name: 'BottomBar',
   components: {
     VehicleCard
   },
@@ -51,13 +54,52 @@ export default {
     }
   },
   data: function() {      
-    return {       
+    return { 
+      sheet: true
     };  
+  },
+  methods: { 
+    clicked() {
+        this.sheet = !this.sheet;
+        console.log('Clicked!');      
+    }
   }
-}
-
+};
 </script>
 
 <style>
-   
+
+.custom-bbar {
+  border-radius: 10px;
+}
+
+.v-bottom-sheet{
+  min-height: 20%;
+  background-color: #FFFFFF;
+  opacity: 100%;
+  left: 260px;
+  max-width: 66%;
+}
+
+.v-bottom-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.toggle-bbar {
+  position: sticky;
+  margin: .5rem;
+  left: 100%;
+  height: 25px;
+  width: 25px;
+}
+
+.bottom-mid {
+    position:fixed;
+    left : 50%;
+    bottom : 0;
+    size: 10px;
+    z-index: 10;
+}
 </style>

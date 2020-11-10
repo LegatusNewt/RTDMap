@@ -2,7 +2,7 @@
     <div v-if="!this.active" class='up-left'>      
         <button v-on:click='clicked()' class='img-btn'><img src="denver.png"></button>
     </div>
-    <vs-sidebar parent="body" v-else-if="this.active" default-index="1" color="primary" class="sidebarx" spacer v-model="this.active">      
+    <vs-sidebar v-else-if="this.active" default-index="1" color="primary" class="sidebarx" spacer v-model="this.active">      
       <div class="header-sidebar" slot="header">
         <vs-button type="border" class="toggle-sidebar" icon="close" v-on:click='clicked()'></vs-button>
         <vs-avatar class="flag-avatar" src="./denver.png"/>
@@ -11,16 +11,9 @@
         </h4>
       </div>
       <div class="body-sidebar">    
-        <h4>Transit</h4>
-        <vs-sidebar-group title="Vehicles">
-          <ul style="list-style: none">
-            <li v-for="vh in vehicles" :key="vh.vehicle.label">
-               <VehicleCard v-bind:vh="vh"></VehicleCard>
-            </li>
-          </ul> 
-        </vs-sidebar-group>      
-        <vs-sidebar-group title="Routes">
-          <ul style="list-style: none">
+        <h4>Transit</h4>           
+        <vs-sidebar-group class="go-away-padding" title="Routes">
+          <ul style="list-style: none;">
             <li v-for="rt in routes" :key="rt.route_id">
               <vs-card>
               <div style="display:flex">
@@ -96,16 +89,10 @@ export default {
   width: 25px;
 }
 
-/*Remove stupid padding that's shifting things when opening sidebar*/
-.vs-sidebar-group.vs-sidebar-group-open>ul {
-  padding-left: 0px;
-}
-
 .vs-sidebar--items {  
   overflow-x: hidden;
   overflow-y: scroll;
 }
-
 
 ::-webkit-scrollbar {
     width: 12px;
