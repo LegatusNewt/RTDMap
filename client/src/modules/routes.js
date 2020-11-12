@@ -13,7 +13,7 @@ export default {
     }),
     mutations: {
         updateRoutes(state, data) {
-            //Sort Routes by Color
+            //Sort Routes by Color            
             data.sort( (a,b) => (a.route_color < b.route_color) ? 1 : -1 );
             state.routes.splice(0, state.routes.length, ...data);
         },

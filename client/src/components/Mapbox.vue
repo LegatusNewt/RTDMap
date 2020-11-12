@@ -40,29 +40,6 @@ export default {
             zoom: 10 // starting zoom
         });
 
-        //Create popup 
-        let popup = new mapboxgl.Popup()
-            .setHTML('<h3>Oops!</h3><p>You nudged it</p>');
-
-        //Create markers based on coordinates in state
-        /*let i = 0;
-        state.coordinates.forEach(coord => {
-            let marker = new mapboxgl.Marker()
-                .setLngLat([coord.x, coord.y])
-                .addTo(state.map)
-                .setPopup(popup);
-
-            let el = marker.getElement();
-            el.id = `${i++}`;
-            
-            //Add click event to each marker
-            el.addEventListener('click', () => {
-                this.$store.commit('nudge', el.id);
-            });
-            state.markers.push(marker);
-        });        
-        */
-
         state.map.on('load', () => {
             state.map.loadImage('./tram-black.png', function (error, image) {
                 if (error) throw error;
@@ -91,9 +68,14 @@ export default {
                     this.$store.dispatch('update')
                 }).catch(err => {
                     console.log(err);
-                });                 
+                });                
 
-            routeLayer();   
+            axios.get('https://opendata.arcgis.com/datasets/e14366d810644a3c95a4f3770799bd54_4.geojson')
+                .then(response => {
+                    routeLayer(response);   
+                }).catch(err => {
+                    console.log(err);
+                });
         });
 
         state.map.on('click', 'GTFS', e => {
@@ -102,15 +84,15 @@ export default {
 
         state.map.on('click', 'Trips', e=> {
             console.log(`Clicked a route : ${e.id}`);
-        });
+        });        
 
-        function routeLayer() {
+        function routeLayer(response) {
             let layer = {
                 id: 'Trips',
                 type: 'line',
                 source: {
                     type: 'geojson',
-                    data: null
+                    data: response.data
                 },
                 layout: {
                     visibility: 'visible'

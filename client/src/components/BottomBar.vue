@@ -2,7 +2,7 @@
 <div v-if="!this.sheet" class='bottom-mid'>      
     <vs-button type="border" v-on:click='clicked()' icon="keyboard_arrow_up"></vs-button>
 </div>
-<v-bottom-sheet v-else-if="this.sheet" v-model="sheet" hide-overlay persistent>
+<v-bottom-sheet noClickAnimation=true v-else-if="this.sheet" v-model="sheet" hide-overlay persistent>
     <vs-button type="border" class="toggle-bbar" icon="close" v-on:click='clicked()'></vs-button>
     <div>
       <h2>{{`${route ? route.route_long_name : 'No Route'}`}}</h2>
