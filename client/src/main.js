@@ -8,6 +8,7 @@ import vuetify from './plugins/vuetify';
 import 'material-icons/iconfont/material-icons.css';
 import vPopup from './components/MapPopup.vue';
 import rModule from './modules/routes.js';
+import mModule from './modules/map.js';
 
 Vue.use(Vuesax);
 Vue.use(Vuex);
@@ -20,7 +21,8 @@ Vue.config.productionTip = false
 
 const store = new Vuex.Store({ 
   modules: {
-    rModule: rModule
+    rModule: rModule,
+    mModule: mModule
   },
   state: {    
     filters: ["all"],
@@ -98,7 +100,7 @@ const store = new Vuex.Store({
       Vue.set(state, 'tripShapes', currentState);
       state.map.getSource('Trips').setData(currentState);
     },
-    updateLayer(state, data) {
+    updateVehicles(state, data) {
       //Gather vehicle objects from geoJSON
       let mapVehicles = new Map();
       let listVehicles = [];
@@ -108,8 +110,8 @@ const store = new Vuex.Store({
       });
       state.vehicles.splice(0, state.vehicles.length, ...listVehicles);
       //state.geoJson.map(data);
-      Vue.set(state, 'geoJson', data);
-      state.map.getSource('GTFS').setData(data);      
+      //Vue.set(state, 'geoJson', data);
+      state.mModule.map.getSource('GTFS').setData(data);                  
       console.log('Update');
     }
   },
@@ -119,10 +121,10 @@ const store = new Vuex.Store({
         commit('updateTripShape', response.data)
       });
     },
-    update ({ commit }) {
+    getVehicles ({ commit }) {
       setInterval(() => {
         axios.get(`${connString}/data`).then( response => {
-          commit('updateLayer', response.data)
+          commit('updateVehicles', response.data)
         });        
       }, 60000);
     }  
@@ -134,7 +136,7 @@ new Vue({
   vuetify,
   render: h => h(App),
   created() {
-    this.$store.dispatch('rModule/updateRoutes');
+    this.$store.dispatch('rModule/updateRoutes');  
   }
 }).$mount('#app')
 

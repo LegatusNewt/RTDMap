@@ -2,7 +2,7 @@
 <div v-if="!this.sheet" class='bottom-mid'>      
     <vs-button type="border" v-on:click='clicked()' icon="keyboard_arrow_up"></vs-button>
 </div>
-<v-bottom-sheet noClickAnimation=true v-else-if="this.sheet" v-model="sheet" hide-overlay persistent>
+<v-bottom-sheet :noClickAnimation="true" v-else-if="this.sheet" v-model="sheet" hide-overlay persistent>
     <vs-button type="border" class="toggle-bbar" icon="close" v-on:click='clicked()'></vs-button>
     <div>
       <h2>{{`${route ? route.route_long_name : 'No Route'}`}}</h2>
@@ -29,13 +29,13 @@ export default {
     VehicleCard
   },
   computed: {    
-    active: {
+    sheet: {
         get: function () {
-          return this.$store.state.rModule.infoVisible;
+          return this.$store.state.rModule.sheet;        
         },
-        set: function () {
-          return this.$store.commit('rModule/hideInfo');
-        }
+        set: function (override) {
+          return this.$store.commit('rModule/hideInfo', override);
+        },         
     },
     route () {
       return this.$store.state.rModule.infoData.route || 'No Route';
@@ -52,11 +52,6 @@ export default {
         return this.$store.state.rModule.trips[this.route.route_id] || [];
       }
     }
-  },
-  data: function() {      
-    return { 
-      sheet: true
-    };  
   },
   methods: { 
     clicked() {

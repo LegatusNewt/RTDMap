@@ -7,6 +7,7 @@ export default {
     namespaced: true,
     state: () => ({
         infoVisible: false,
+        sheet: false,
         infoData: {},
         routes: [],
         trips: {}
@@ -24,10 +25,11 @@ export default {
         },
         openInfo(state, route) {
             Vue.set(state, 'infoData', { route: route, trips: state.trips[route.route_id]});
+            Vue.set(state, 'sheet', true);
             //Vue.set(state, 'infoVisible', true);      
         },
-        hideInfo(state) {
-            Vue.set(state, 'infoVisible', false);
+        hideInfo(state, override) {
+            Vue.set(state, 'sheet', override);
         }
     },
     actions: {        
