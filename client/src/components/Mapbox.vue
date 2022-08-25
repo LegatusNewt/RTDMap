@@ -48,7 +48,7 @@ export default {
                 if (error) throw error;
                 mapState.map.addImage('bus-black', image);
             });
-            axios.get('http://192.168.185.243:3000/data')
+            axios.get('http://localhost:3000/data')
                 .then(response => {
                     let layer = {
                         id: 'GTFS',

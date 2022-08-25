@@ -15,7 +15,7 @@ Vue.use(Vuex);
 Vue.use(vuetify);
 
 const VuePopup = Vue.extend(vPopup);
-const connString = 'http://justinian.local:3000';
+const connString = 'http://localhost:3000';
 
 Vue.config.productionTip = false
 
@@ -49,13 +49,13 @@ const store = new Vuex.Store({
       const poppy = new mapboxgl.Popup()
       .setLngLat(coordinates)
       .setHTML(`<div id="poppy${vhID}"</div>`) //hacky      
-      .addTo(state.map);
+      .addTo(state.mModule.map);
 
       popup.$mount(`#poppy${vhID}`);
       poppy._update();
     },
     targetAquired (state,target) {
-      state.map.flyTo({
+      state.mModule.map.flyTo({
         center: [target.position.longitude, target.position.latitude],
         zoom: 15
       });      
@@ -89,7 +89,7 @@ const store = new Vuex.Store({
         }
         Vue.set(state, 'filters', currentFilter);
         Vue.set(state, 'tripShapes', currentState);
-        state.map.setFilter( 'tripShapes', currentFilter );
+        state.mModule.map.setFilter( 'tripShapes', currentFilter );
       }      
     },
     updateTripShape(state, data) {
@@ -98,7 +98,7 @@ const store = new Vuex.Store({
         currentState.features.push( { ...data, visible: true } ); //don't know route or trip id yet
       }      
       Vue.set(state, 'tripShapes', currentState);
-      state.map.getSource('Trips').setData(currentState);
+      state.mModule.map.getSource('Trips').setData(currentState);
     },
     updateVehicles(state, data) {
       //Gather vehicle objects from geoJSON

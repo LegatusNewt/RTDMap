@@ -9,7 +9,7 @@ const express = require('express'),
 
 const FEED_SETTINGS = { 
     method: 'GET',
-    url: 'http://googlefeeder.rtd-denver.com/google_sync/VehiclePosition.pb',
+    url: 'http://rtd-denver.com/files/gtfs-rt/VehiclePosition.pb',
     auth: {
         user: 'RTDgtfsRT',
         password: 'realT!m3Feed',
