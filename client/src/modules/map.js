@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Vue from 'vue'
 
-const connString = 'http://justinian.local:3000'; //change to config file value
+const connString = 'http://justinian:3000'; //change to config file value
 
 export default {
     namespaced: true,

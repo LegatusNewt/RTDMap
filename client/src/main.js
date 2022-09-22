@@ -15,7 +15,7 @@ Vue.use(Vuex);
 Vue.use(vuetify);
 
 const VuePopup = Vue.extend(vPopup);
-const connString = 'http://localhost:3000';
+const connString = 'http://justinian:3000';
 
 Vue.config.productionTip = false
 
